@@ -7,6 +7,9 @@ const catalogSections = [...document.querySelectorAll(".catalog-section")];
 const noResults = document.querySelector(".catalog__no-results");
 const cartButton = document.querySelector(".cart-button");
 const cartCount = document.querySelector(".cart-button__count");
+const mobileCart = document.querySelector(".mobile-cart");
+const mobileCartCount = document.querySelector(".mobile-cart__count");
+const mobileCartTotal = document.querySelector(".mobile-cart__total");
 const orderBag = document.querySelector("#order-bag");
 const closeBagButton = document.querySelector(".order-bag__close");
 const emptyBag = document.querySelector(".order-bag__empty");
@@ -27,6 +30,9 @@ if (
   !(noResults instanceof HTMLParagraphElement) ||
   !(cartButton instanceof HTMLButtonElement) ||
   !(cartCount instanceof HTMLSpanElement) ||
+  !(mobileCart instanceof HTMLButtonElement) ||
+  !(mobileCartCount instanceof HTMLSpanElement) ||
+  !(mobileCartTotal instanceof HTMLElement) ||
   !(orderBag instanceof HTMLDialogElement) ||
   !(closeBagButton instanceof HTMLButtonElement) ||
   !(emptyBag instanceof HTMLDivElement) ||
@@ -105,6 +111,7 @@ document.addEventListener("click", (event) => {
 });
 
 cartButton.addEventListener("click", () => orderBag.showModal());
+mobileCart.addEventListener("click", () => orderBag.showModal());
 closeBagButton.addEventListener("click", () => orderBag.close());
 orderBag.addEventListener("click", (event) => {
   if (event.target === orderBag) {
@@ -191,6 +198,13 @@ function renderCart() {
   cartCount.setAttribute(
     "aria-label",
     `${itemCount} ${itemCount === 1 ? "item" : "itens"}`,
+  );
+  mobileCart.hidden = itemCount === 0;
+  mobileCartCount.textContent = String(itemCount);
+  mobileCartTotal.textContent = formatPrice(total);
+  mobileCart.setAttribute(
+    "aria-label",
+    `Abrir sacola, ${itemCount} ${itemCount === 1 ? "item" : "itens"}, total ${formatPrice(total)}`,
   );
   cartButton.setAttribute(
     "aria-label",

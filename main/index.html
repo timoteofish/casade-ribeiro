@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Casa de Ribeiro</title>
+    <meta
+      name="description"
+      content="Explore o cardápio da Casa de Ribeiro e escolha seus favoritos para pedir."
+    />
+    <meta name="theme-color" content="#7b241f" />
+    <title>Cardápio | Casa de Ribeiro</title>
     <link rel="icon" href="./assets/logo-website.ico" type="image/x-icon" />
     <link rel="stylesheet" href="style.css" />
     <script src="main.js" defer></script>
@@ -20,7 +25,7 @@
         </a>
         <div class="site-header__actions">
           <form class="menu-search" role="search">
-            <label class="visually-hidden" for="menu-search"> Buscar no cardápio </label>
+            <label class="visually-hidden" for="menu-search">Buscar no cardápio</label>
             <input
               id="menu-search"
               type="search"
@@ -70,11 +75,12 @@
       </div>
     </header>
     <main class="site-content">
-      <section class="catalog" aria-labelledby="catalog-title">
-        <div class="catalog__heading">
-          <h1 id="catalog-title">Aproveite nosso cardápio</h1>
-          <p class="catalog__intro">Escolha seus favoritos e monte seu pedido!</p>
-        </div>
+      <section class="catalog" aria-label="Cardápio">
+        <nav class="category-nav" aria-label="Ir para uma categoria">
+          <a href="#burgers-title">Hambúrgueres</a>
+          <a href="#sides-title">Acompanhamentos</a>
+          <a href="#drinks-title">Bebidas</a>
+        </nav>
         <section class="catalog-section" aria-labelledby="burgers-title">
           <h2 id="burgers-title">Hambúrgueres</h2>
           <div class="catalog-grid">
@@ -82,7 +88,7 @@
               class="menu-card"
               data-searchable="burger ribeiro artesanal carne queijo molho especial"
             >
-              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__visual menu-card__visual--burger" aria-hidden="true"></div>
               <div class="menu-card__body">
                 <h3>Burger Ribeiro</h3>
                 <p>Pão macio, carne grelhada, queijo e molho especial da casa.</p>
@@ -102,7 +108,10 @@
               </div>
             </article>
             <article class="menu-card" data-searchable="burger cheddar bacon artesanal carne">
-              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div
+                class="menu-card__visual menu-card__visual--burger menu-card__visual--cheddar"
+                aria-hidden="true"
+              ></div>
               <div class="menu-card__body">
                 <h3>Burger Cheddar &amp; Bacon</h3>
                 <p>Carne grelhada, cheddar cremoso, bacon crocante e pão tostado.</p>
@@ -127,7 +136,7 @@
           <h2 id="sides-title">Acompanhamentos</h2>
           <div class="catalog-grid">
             <article class="menu-card" data-searchable="batata frita porção acompanhamento">
-              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__visual menu-card__visual--fries" aria-hidden="true"></div>
               <div class="menu-card__body">
                 <h3>Batata crocante</h3>
                 <p>Porção de batatas douradas, perfeita para acompanhar.</p>
@@ -152,7 +161,7 @@
           <h2 id="drinks-title">Bebidas</h2>
           <div class="catalog-grid">
             <article class="menu-card" data-searchable="refrigerante bebida lata gelada">
-              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__visual menu-card__visual--drink" aria-hidden="true"></div>
               <div class="menu-card__body">
                 <h3>Refrigerante lata</h3>
                 <p>Bebida gelada para completar seu pedido.</p>
@@ -176,7 +185,26 @@
         <p class="catalog__no-results" hidden>Nenhum item encontrado. Tente outra busca.</p>
       </section>
     </main>
-    <footer class="site-footer">&copy; 2026</footer>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span class="site-footer__brand">Casa de Ribeiro</span>
+        <span class="site-footer__tagline">By timoteofish developer</span>
+        <span class="site-footer__copyright">&copy; 2026</span>
+      </div>
+    </footer>
+    <button
+      class="mobile-cart"
+      type="button"
+      aria-label="Abrir sacola"
+      aria-controls="order-bag"
+      hidden
+    >
+      <span class="mobile-cart__label">
+        <span class="mobile-cart__count">0</span>
+        <span>Ver sacola</span>
+      </span>
+      <strong class="mobile-cart__total">R$ 0,00</strong>
+    </button>
     <dialog class="order-bag" id="order-bag" aria-labelledby="order-bag-title">
       <div class="order-bag__header">
         <h2 id="order-bag-title">Sua sacola</h2>
