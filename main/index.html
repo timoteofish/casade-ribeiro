@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casa de Ribeiro</title>
+    <link rel="icon" href="./assets/logo-website.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js" defer></script>
+  </head>
+  <body class="main-transition">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="./" aria-label="Casa de Ribeiro - início">
+          <img class="site-brand__hat" src="./assets/logo-website.webp" alt="" />
+          <span class="site-brand__text">
+            <span class="site-brand__name">Casa de Ribeiro</span>
+            <span class="site-brand__tagline">Cardápio digital</span>
+          </span>
+        </a>
+        <div class="site-header__actions">
+          <form class="menu-search" role="search">
+            <label class="visually-hidden" for="menu-search"> Buscar no cardápio </label>
+            <input
+              id="menu-search"
+              type="search"
+              placeholder="Buscar no cardápio"
+              autocomplete="off"
+              tabindex="-1"
+            />
+            <button
+              class="menu-search__toggle"
+              type="button"
+              aria-label="Abrir busca"
+              aria-expanded="false"
+              aria-controls="menu-search"
+            >
+              <svg class="menu-search__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                <path d="m16 16 5 5"></path>
+              </svg>
+            </button>
+          </form>
+          <button
+            class="cart-button"
+            type="button"
+            aria-label="Abrir sacola"
+            aria-haspopup="dialog"
+            aria-controls="order-bag"
+          >
+            <svg class="cart-button__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M5 8h14l-1.2 12H6.2L5 8Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+              <path
+                d="M9 9V6a3 3 0 0 1 6 0v3"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="1.8"
+              />
+            </svg>
+            <span class="cart-button__count" aria-label="0 itens" hidden>0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main class="site-content">
+      <section class="catalog" aria-labelledby="catalog-title">
+        <div class="catalog__heading">
+          <h1 id="catalog-title">Aproveite nosso cardápio</h1>
+          <p class="catalog__intro">Escolha seus favoritos e monte seu pedido!</p>
+        </div>
+        <section class="catalog-section" aria-labelledby="burgers-title">
+          <h2 id="burgers-title">Hambúrgueres</h2>
+          <div class="catalog-grid">
+            <article
+              class="menu-card"
+              data-searchable="burger ribeiro artesanal carne queijo molho especial"
+            >
+              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__body">
+                <h3>Burger Ribeiro</h3>
+                <p>Pão macio, carne grelhada, queijo e molho especial da casa.</p>
+                <div class="menu-card__footer">
+                  <strong>R$ 28,90</strong>
+                  <button
+                    class="add-button"
+                    type="button"
+                    data-add-to-cart
+                    data-product-id="burger-ribeiro"
+                    data-product-name="Burger Ribeiro"
+                    data-product-price="28.90"
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </article>
+            <article class="menu-card" data-searchable="burger cheddar bacon artesanal carne">
+              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__body">
+                <h3>Burger Cheddar &amp; Bacon</h3>
+                <p>Carne grelhada, cheddar cremoso, bacon crocante e pão tostado.</p>
+                <div class="menu-card__footer">
+                  <strong>R$ 32,90</strong>
+                  <button
+                    class="add-button"
+                    type="button"
+                    data-add-to-cart
+                    data-product-id="burger-cheddar-bacon"
+                    data-product-name="Burger Cheddar &amp; Bacon"
+                    data-product-price="32.90"
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section class="catalog-section" aria-labelledby="sides-title">
+          <h2 id="sides-title">Acompanhamentos</h2>
+          <div class="catalog-grid">
+            <article class="menu-card" data-searchable="batata frita porção acompanhamento">
+              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__body">
+                <h3>Batata crocante</h3>
+                <p>Porção de batatas douradas, perfeita para acompanhar.</p>
+                <div class="menu-card__footer">
+                  <strong>R$ 16,90</strong>
+                  <button
+                    class="add-button"
+                    type="button"
+                    data-add-to-cart
+                    data-product-id="batata-crocante"
+                    data-product-name="Batata crocante"
+                    data-product-price="16.90"
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section class="catalog-section" aria-labelledby="drinks-title">
+          <h2 id="drinks-title">Bebidas</h2>
+          <div class="catalog-grid">
+            <article class="menu-card" data-searchable="refrigerante bebida lata gelada">
+              <div class="menu-card__visual" aria-hidden="true"></div>
+              <div class="menu-card__body">
+                <h3>Refrigerante lata</h3>
+                <p>Bebida gelada para completar seu pedido.</p>
+                <div class="menu-card__footer">
+                  <strong>R$ 7,00</strong>
+                  <button
+                    class="add-button"
+                    type="button"
+                    data-add-to-cart
+                    data-product-id="refrigerante-lata"
+                    data-product-name="Refrigerante lata"
+                    data-product-price="7.00"
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <p class="catalog__no-results" hidden>Nenhum item encontrado. Tente outra busca.</p>
+      </section>
+    </main>
+    <footer class="site-footer">&copy; 2026</footer>
+    <dialog class="order-bag" id="order-bag" aria-labelledby="order-bag-title">
+      <div class="order-bag__header">
+        <h2 id="order-bag-title">Sua sacola</h2>
+        <button class="order-bag__close" type="button" aria-label="Fechar sacola">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="m6 6 12 12M18 6 6 18"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="order-bag__items" aria-live="polite">
+        <div class="order-bag__empty">
+          <svg class="order-bag__empty-icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path
+              d="M8 16h32l-3 25H11L8 16Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+            <path
+              d="M17 18v-5a7 7 0 0 1 14 0v5"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+            />
+          </svg>
+          <p class="order-bag__empty-title">Sua sacola está vazia</p>
+          <p class="order-bag__empty-description">
+            Escolha seus favoritos no cardápio para começar.
+          </p>
+        </div>
+        <ul class="order-bag__list"></ul>
+      </div>
+      <div class="order-bag__footer">
+        <div class="order-bag__total">
+          <span>Total</span>
+          <strong>R$ 0,00</strong>
+        </div>
+        <button class="order-bag__checkout" type="button" disabled>Continuar para o pedido</button>
+      </div>
+    </dialog>
+    <div class="page-shutter" aria-hidden="true">
+      <span class="page-shutter__panel page-shutter__panel--left"></span>
+      <span class="page-shutter__panel page-shutter__panel--right"></span>
+    </div>
+  </body>
+</html>
