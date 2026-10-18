@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /.git/
+Disallow: /.env
+Disallow: /admin/
+Disallow: /api/
+
+# This file guides compliant crawlers; it is not an access-control mechanism.
