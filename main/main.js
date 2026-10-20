@@ -10,6 +10,20 @@ let catalogCards = [];
 let catalogSections = [];
 const catalog = document.querySelector(".catalog");
 const noResults = document.querySelector(".catalog__no-results");
+const categoryNav = document.querySelector(".category-nav");
+const categoryNavPrevious = document.querySelector(".category-nav__arrow--prev");
+const categoryNavNext = document.querySelector(".category-nav__arrow--next");
+let categoryNavDirection = 1;
+let categoryNavPaused = false;
+let categoryNavResumeTimer;
+
+function pauseCategoryNav() {
+  categoryNavPaused = true;
+  window.clearTimeout(categoryNavResumeTimer);
+  categoryNavResumeTimer = window.setTimeout(() => {
+    categoryNavPaused = false;
+  }, 7000);
+}
 const cartButton = document.querySelector(".cart-button");
 const cartCount = document.querySelector(".cart-button__count");
 const mobileCart = document.querySelector(".mobile-cart");
@@ -32,6 +46,28 @@ const closedNoticeClose = document.querySelector(".closed-notice__close");
 const simulateClosed = false;
 const cartItems = new Map();
 let pendingDrinkButton;
+
+function updateCategoryNavArrows() {
+  if (!categoryNav || !categoryNavPrevious || !categoryNavNext) return;
+  const maxScroll = categoryNav.scrollWidth - categoryNav.clientWidth;
+  categoryNavPrevious.hidden = maxScroll <= 0 || categoryNav.scrollLeft <= 1;
+  categoryNavNext.hidden = maxScroll <= 0 || categoryNav.scrollLeft >= maxScroll - 1;
+}
+
+categoryNav?.addEventListener("scroll", updateCategoryNavArrows, { passive: true });
+categoryNavPrevious?.addEventListener("click", () => { pauseCategoryNav(); categoryNav?.scrollBy({ left: -240, behavior: "smooth" }); });
+categoryNavNext?.addEventListener("click", () => { pauseCategoryNav(); categoryNav?.scrollBy({ left: 240, behavior: "smooth" }); });
+categoryNav?.addEventListener("wheel", pauseCategoryNav, { passive: true });
+categoryNav?.addEventListener("touchstart", pauseCategoryNav, { passive: true });
+window.setInterval(() => {
+  if (!categoryNav || categoryNavPaused || categoryNav.scrollWidth <= categoryNav.clientWidth) return;
+  const maxScroll = categoryNav.scrollWidth - categoryNav.clientWidth;
+  const nextScroll = categoryNav.scrollLeft + categoryNavDirection * 0.7;
+  if (nextScroll >= maxScroll) categoryNavDirection = -1;
+  if (nextScroll <= 0) categoryNavDirection = 1;
+  categoryNav.scrollLeft = Math.max(0, Math.min(maxScroll, nextScroll));
+}, 24);
+window.addEventListener("resize", updateCategoryNavArrows);
 
 const taglineMessages = [
   "Cardápio digital",
@@ -71,54 +107,36 @@ updateOpeningStatus();
 setInterval(updateOpeningStatus, 60000);
 
 const menuCatalog = [
-  ["Todos os dias", "daily-title", [
-    ["Sabores", 14, "Arroz, feijão, salada e macarrão."], ["Comida Baiana", 25], ["Sarapatel", 25], ["Mocotó", 25], ["Rabada", 25], ["Feijoada", 25], ["Filé à Parmegiana", 39, "Arroz e purê de batata."],
-  ]],
-  ["Jantinha", "jantinha-title", [["01 Espetinho", 16, "Arroz, aipim e vinagrete."]]],
-  ["Quinta do Dendê", "dende-title", [["Acarajé com Camarão", 18], ["Acarajé sem Camarão", 15], ["Abará com Camarão", 18], ["Abará sem Camarão", 15], ["Mini Acarajé com Camarão (6 un.)", 18], ["Mini Acarajé com Camarão (12 un.)", 36], ["Mini Acarajé sem Camarão (6 un.)", 18], ["Mini Acarajé sem Camarão (12 un.)", 36]]],
-  ["Espetinhos", "skewers-title", [["Carne Bovina", 10], ["Coração", 10], ["Porco", 10], ["Frango", 10], ["Queijo Coalho", 10], ["Pão de Alho", 10, "Vinagrete e farofa."]]],
-  ["Petiscos", "snacks-title", [["Batata Frita Pequena", 8], ["Batata Frita Média", 13], ["Batata Frita Grande", 23], ["Batata Frita com Cheddar e Bacon", 33], ["Aipim Frito Médio", 13], ["Aipim Frito Grande", 23], ["Camarão Alho e Óleo", 49.99], ["Filé com Fritas", 39], ["Carne de Sol com Fritas", 44.99], ["Carne de Sol com Aipim", 44.99], ["Charque com Farofa d'Água", 49.99], ["Kibe (6 unidades)", 18], ["Pastel (6 unidades)", 18, "Carne e frango."], ["Pastel Grande", 18, "Frango, carne, queijo e presunto."]]],
+  ["Todos os dias", "daily-title", [["Comida Baiana", 25.99, "Acompanha arroz, farofa, salada e vinagrete."], ["Sarapatel", 25.99, "Ingredientes e acompanhamentos não especificados individualmente no cardápio."], ["Mocotó", 25.99, "Ingredientes e acompanhamentos não especificados individualmente no cardápio."], ["Rabada", 25.99, "Ingredientes e acompanhamentos não especificados individualmente no cardápio."], ["Feijoada", 25.99, "Ingredientes e acompanhamentos não especificados individualmente no cardápio."], ["Filé à Parmegiana", 39.99, "Arroz e purê de batata."], ["Escondidinho com Purê de Aipim", 40.99, "Acompanha arroz e purê de batata, conforme indicação no cardápio."], ["Jantinha", 8.99, "Composição não especificada no cardápio."], ["O Espetinho", 8.99, "Acompanha arroz, farofa e vinagrete."]]],
+  ["Quinta do Dendê", "dende-title", [["Acarajé com Camarão", 8.99], ["Acarajé sem Camarão", 5.99], ["Abará com Camarão", 8.99], ["Abará sem Camarão", 5.99], ["Mini Acarajé com Camarão (6 un.)", 15.99], ["Mini Acarajé com Camarão (8 un.)", 20.99], ["Mini Acarajé sem Camarão (6 un.)", 15.99], ["Mini Acarajé sem Camarão (8 un.)", 20.99]]],
+  ["Espetinhos", "skewers-title", [["Carne Bovina", 8.99, "Espetinho de carne bovina."], ["Coração", 8.99, "Espetinho de coração."], ["Porco", 8.99, "Espetinho de carne suína."], ["Frango", 8.99, "Espetinho de frango."], ["Queijo Coalho", 8.99, "Espetinho de queijo coalho."], ["Pão de Alho", 8.99, "Pão de alho."]]],
+  ["Petiscos", "snacks-title", [["Batata Frita Pequena", 15.99], ["Batata Frita Média", 18.99], ["Batata Frita Grande", 21.99], ["Batata Frita com Cheddar e Bacon", 25.99], ["Aipim Frito Pequeno", 15.99], ["Aipim Frito Grande", 25.99], ["Camarão Alho e Óleo", 49.99], ["Filé com Fritas", 39.99], ["Carne de Sol com Fritas", 49.99], ["Carne de Sol com Aipim", 49.99], ["Charque com Farofa d'Água", 49.99], ["Kibe", 8.99], ["Pastel (6 unidades)", 18.99], ["Pastel Grande", 18.99]]],
   ["Bebidas", "drinks-title", [
-    ["Água sem gás", 3], ["Água com gás", 4], ["Água sem gás 1,5L", 6], ["H2O", 7],
-    ["Refrigerante em lata", 6], ["Refrigerante 200ml", 3], ["Coca-Cola 1L", 12],
-    ["Coca-Cola 600ml", 7], ["Refrigerante 1L", 8], ["Red Bull", 16], ["Monster", 16],
+    ["Água sem gás", 3], ["Água com gás", 4], ["Água sem gás 1,5 L", 6], ["H2O", 7],
+    ["Refrigerante em Lata", 6], ["Refrigerante 200 ml", 3], ["Coca-Cola 1 L", 10],
+    ["Coca-Cola 600 ml", 7], ["Refrigerante 1 L", 8], ["Red Bull", 15], ["Monster", 15],
   ]],
   ["Cervejas", "beers-title", [
-    ["Heineken 600ml", 16], ["Stella Artois 550ml", 14], ["Stella Artois Pure Golden", 20],
+    ["Heineken 600 ml", 16], ["Stella Artois 550 ml", 14], ["Stella Artois Pure Golden", 20, "Cerveja Stella Artois Pure Golden."],
     ["Original 600ml", 12], ["Spaten 600ml", 12], ["Brahma Chopp 600ml", 12], ["Skol 600ml", 10],
     ["Amstel 600ml", 12], ["Amstel 300ml", 6], ["Skol 300ml", 5], ["Cervejas de lata", 6], ["Long Neck", 10],
   ]],
   ["Quentes", "hot-drinks-title", [
-    ["Whisky Ballantine's", 16], ["Whisky Red", 16], ["Caipirinha", 9], ["Caipirosca", 14],
-    ["Conhaque", 6], ["Domecq", 8], ["Campari", 10], ["Alcatrão", 6], ["Asa Branca", 5], ["Pitú", 3],
+    ["Whisky Ballantine's", 10], ["Whisky Red", 16], ["Caipirinha", 6], ["Caipirosca", 14],
+    ["Conhaque", 6], ["Domecq", 6], ["Campari", 10], ["Alcatrão", 6], ["Asa Branca", 5], ["Pitú", 3],
   ]],
   ["Hambúrgueres", "burgers-title", [
     ["Hambúrguer", 9.99, "Pão, salada, molho especial e carne"],
-    ["Hambúrguer Especial", 13, "Pão, salada, molho especial, carne, queijo e batata palha"],
-    ["X-Burguer", 15, "Pão, salada, molho especial, carne, queijo e presunto"],
-    ["X-Bacon", 18, "Pão, molho especial, carne, bacon e queijo"],
-    ["American Burguer", 18, "Pão, salada, molho especial, carne, ovo, queijo e presunto"],
-    ["X-Salada", 16, "Pão, salada, molho especial, carne e batata palha"],
-    ["Egg Burguer", 18, "Pão, salada, molho especial, carne, ovo e batata palha"],
-    ["X-Egg", 19, "Pão, salada, molho especial, carne, queijo, ovo e batata palha"],
-    ["X-Calabresa", 20, "Pão, salada, molho especial, carne, queijo e calabresa"],
-    ["Calabresa Especial", 20, "Pão, salada, molho especial, calabresa, ovo e bacon"],
-    ["X-Egg Calabresa", 20, "Pão, salada, molho especial, carne, ovo, calabresa, queijo e batata palha"],
-    ["X-Tudo", 23, "Pão, salada, molho especial, carne, ovo, queijo, presunto, calabresa, bacon e batata palha"],
-    ["X-Tudo Duplo", 30, "Pão, salada, molho especial, 2 carnes, 2 ovos, queijo, presunto, calabresa, bacon e batata palha em dobro"],
-    ["Big Cheddar", 22, "Pão, salada, molho especial, 2 carnes, 2 queijos e batata palha"],
-    ["Big Bacon", 24, "Pão, salada, molho especial, 2 carnes, 2 queijos, bacon e batata palha"],
-    ["Big Calabresa", 24, "Pão, salada, molho especial, 2 carnes, 2 queijos, calabresa e batata palha"],
-    ["Triplo X", 26, "Pão, salada, molho especial, 3 carnes, 3 queijos, bacon e batata palha"],
-    ["Big Burguer", 24, "Pão, salada, molho especial, 2 carnes, bacon, calabresa, 2 queijos e batata palha"],
+    ["Hambúrguer Especial", 12.99, "Pão, salada, molho especial, carne, queijo e batata palha."], ["X-Burguer", 14.99, "Pão, salada, molho especial, carne, queijo e presunto."], ["X-Bacon", 17.99, "Pão, molho especial, carne, bacon e queijo."], ["American Burguer", 17, "Pão, salada, molho especial, carne, ovo, queijo e presunto."], ["X-Salada", 15.99, "Pão, salada, molho especial, carne e batata palha."], ["Egg Burguer", 17.99, "Pão, salada, molho especial, carne, ovo e batata palha."], ["X-Egg", 18.99, "Pão, salada, molho especial, carne, queijo, ovo e batata palha."], ["X-Calabresa", 19.99, "Pão, salada, molho especial, carne, queijo e calabresa."], ["Calabresa Especial", 19.99, "Pão, salada, molho especial, calabresa, ovo e bacon."], ["X-Egg Calabresa", 19.99, "Pão, salada, molho especial, carne, ovo, calabresa, queijo e batata palha."], ["X-Tudo", 22.99, "Pão, salada, molho especial, carne, ovo, queijo, presunto, calabresa, bacon e batata palha."], ["X-Tudo Duplo", 39.99, "Pão, salada, molho especial, 2 carnes, 2 ovos, queijo, presunto, calabresa, bacon e batata palha em dobro."], ["Big Cheddar", 22.99, "Pão, salada, molho especial, 2 carnes, 2 queijos e batata palha."], ["Big Bacon", 23.99, "Pão, salada, molho especial, 2 carnes, 2 queijos, bacon e batata palha."], ["Big Calabresa", 23.99, "Pão, salada, molho especial, 2 carnes, 2 queijos, calabresa e batata palha."], ["Triplo X", 25.99, "Pão, salada, molho especial, 3 carnes, 3 queijos, bacon e batata palha."], ["Big Burguer", 23.99, "Pão, salada, molho especial, 2 carnes, bacon, calabresa, 2 queijos e batata palha."],
   ]],
   ["Tradicionais", "traditional-title", [
-    ["Misto Quente", 10, "Pão, queijo e presunto"],
-    ["Misto Quente Especial", 13, "Pão, 3 fatias de queijo e 3 fatias de presunto"],
-    ["Americano", 13, "Pão, salada, ovo, queijo e presunto"],
-    ["Bauru", 12, "Pão, salada, queijo e presunto"],
-    ["Bauru Especial", 14, "Pão, salada, 3 fatias de queijo e 3 fatias de presunto"],
+    ["Misto Quente", 9.99, "Pão, queijo e presunto."], ["Misto Quente Especial", 12.99, "Pão, 3 fatias de queijo e 3 fatias de presunto."], ["Americano", 12.99, "Pão, salada, ovo, queijo e presunto."], ["Bauru", 11.99, "Pão, salada, queijo e presunto."], ["Bauru Especial", 13.99, "Pão, salada, 3 fatias de queijo e 3 fatias de presunto."],
   ]],
+  ["Hambúrgueres de Frango", "chicken-title", [["Ki Frango", 16.99, "Pão, salada, molho especial, frango e batata palha."], ["Especial de Frango", 18.99, "Pão, salada, molho especial, frango, queijo e batata palha."], ["Frango Chic", 18.99, "Pão, salada, molho especial, frango, queijo, ovo e batata palha."], ["Frango Calabresa", 19.99, "Pão, salada, molho especial, frango, calabresa, queijo e batata palha."], ["Franbacon", 19.99, "Pão, salada, molho especial, frango, queijo e bacon."], ["Egg Frango", 21.99, "Pão, salada, molho especial, frango, queijo, ovo e batata palha."], ["Frango Mais", 21.99, "Pão, salada, molho especial, frango, calabresa, bacon, queijo e batata palha."]]],
+  ["Sanduíches Especiais com Filé", "file-title", [["X-Filé", 23.99, "Pão, salada, molho especial, filé de carne, queijo e batata palha."], ["Filezão", 28.99, "Pão, salada, molho especial, filé bovino, queijo, presunto, ovo, calabresa, bacon e batata palha."]]],
+  ["Sanduíches Especiais no Prato", "plate-title", [["Chapa Burguer", 33.99, "Pão, filé bovino, 2 ovos, bacon, calabresa, queijo, presunto, batata palha, molho cheddar, barbecue e requeijão cremoso."], ["Moda da Casa", 39.99, "Pão, filé bovino, 2 ovos, bacon, calabresa, queijo, presunto, azeitonas, frango desfiado, batata palha, salada, cheddar e barbecue."]]],
+  ["Artesanais", "artisan-title", [["Clássico", 29.99, "Pão, 1 carne, queijo, bacon, salada e cebola caramelizada."], ["Raiz", 27.99, "Pão, 1 carne, queijo, ovo, bacon, salada e cebola caramelizada."], ["Supremo", 31.99, "Pão, 2 carnes, queijo, bacon, salada e cebola caramelizada."], ["Potente", 33.99, "Pão, 2 carnes, queijo, bacon, ovo, salada e cebola caramelizada."]]],
+  ["Sucos 400 ml", "juices-title", [["Abacaxi", 6], ["Cacau", 6], ["Goiaba", 6], ["Acerola", 6], ["Morango", 6], ["Cajá", 6], ["Umbu", 6], ["Caju", 6], ["Cupuaçu", 6], ["Manga", 6], ["Graviola", 6], ["Maracujá", 6], ["Com Leite (qualquer sabor)", 7]]],
 ];
 
 const productImages = {
@@ -126,11 +144,11 @@ const productImages = {
   "Água com gás": "água-com-gas.webp",
   "Água sem gás 1,5L": "agua-sem-gas-1.5L.webp",
   "H2O": "h2o.webp",
-  "Refrigerante em lata": "refrigerante-em-lata.webp",
-  "Refrigerante 200ml": "refrigerante-200ml.webp",
-  "Coca-Cola 1L": "coca-cola-1L.webp",
-  "Coca-Cola 600ml": "coca-cola-600ml.webp",
-  "Refrigerante 1L": "refrigerante-1L.webp",
+  "Refrigerante em Lata": "refrigerante-em-lata.webp",
+  "Refrigerante 200 ml": "refrigerante-200ml.webp",
+  "Coca-Cola 1 L": "coca-cola-1L.webp",
+  "Coca-Cola 600 ml": "coca-cola-600ml.webp",
+  "Refrigerante 1 L": "refrigerante-1L.webp",
   "Red Bull": "red-bull.webp",
   "Monster": "monster.webp",
   "Heineken 600ml": "heineken-600ml.webp",
@@ -154,7 +172,25 @@ const productImages = {
 };
 
 const isThursday = new Date().getDay() === 4;
-const orderedCatalog = menuCatalog.filter(([title]) => title !== "Quinta do Dendê" || isThursday);
+const catalogOrder = [
+  "Todos os dias",
+  "Hambúrgueres",
+  "Tradicionais",
+  "Hambúrgueres de Frango",
+  "Sanduíches Especiais com Filé",
+  "Sanduíches Especiais no Prato",
+  "Artesanais",
+  "Quinta do Dendê",
+  "Espetinhos",
+  "Petiscos",
+  "Sucos 400 ml",
+  "Bebidas",
+  "Cervejas",
+  "Quentes",
+];
+const orderedCatalog = menuCatalog
+  .filter(([title]) => title !== "Quinta do Dendê" || isThursday)
+  .sort(([firstTitle], [secondTitle]) => catalogOrder.indexOf(firstTitle) - catalogOrder.indexOf(secondTitle));
 const foodProductNames = new Set([
   ...orderedCatalog.filter(([title]) => !["Bebidas", "Cervejas", "Quentes"].includes(title)).flatMap(([, , items]) => items.map(([name]) => name)),
 ]);
@@ -214,6 +250,7 @@ function renderCatalog() {
     link.textContent = title;
     return link;
   }));
+  updateCategoryNavArrows();
   catalogSections.forEach((section, sectionIndex) => {
     const [title, titleId, items] = orderedCatalog[sectionIndex];
     section.setAttribute("aria-labelledby", titleId);
@@ -226,13 +263,14 @@ function renderCatalog() {
       const card = document.createElement("article");
       card.className = "menu-card";
       card.dataset.searchable = `${title} ${name}`;
-      const fallbackImage = ["Hambúrgueres", "Tradicionais", "Todos os dias", "Jantinha", "Quinta do Dendê", "Espetinhos", "Petiscos"].includes(title) ? "comida2.webp" : "bebida.webp";
+      const fallbackImage = ["Hambúrgueres", "Tradicionais", "Todos os dias", "Quinta do Dendê", "Espetinhos", "Petiscos"].includes(title) ? "comida2.webp" : "bebida.webp";
       const resolvedImageName = productImages[name] ?? fallbackImage;
       const imagePath = `./assets/${encodeURIComponent(resolvedImageName)}`;
       const fallbackPath = `./assets/${fallbackImage}`;
       const priceLabel = price == null ? "Preço não informado" : formatPrice(price);
       const addButton = price == null ? "disabled aria-disabled=\"true\"" : `data-product-price=\"${price.toFixed(2)}\"`;
-      card.innerHTML = `<div class="menu-card__visual menu-card__visual--drink"><img src="${imagePath}" alt="${name}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackPath}';"></div><div class="menu-card__body"><h3>${name}</h3><p>${itemDescription}</p><div class="menu-card__footer"><strong>${priceLabel}</strong><button class="add-button" type="button" data-add-to-cart data-product-id="${productId(name)}" data-product-name="${name}" ${addButton}>Adicionar</button></div></div>`;
+      const addButtonLabel = price == null ? "Indisponível" : priceLabel;
+      card.innerHTML = `<div class="menu-card__visual menu-card__visual--drink"><img src="${imagePath}" alt="${name}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackPath}';"></div><div class="menu-card__body"><h3>${name}</h3><p>${itemDescription}</p><div class="menu-card__footer"><button class="add-button" type="button" data-add-to-cart data-product-id="${productId(name)}" data-product-name="${name}" ${addButton}>${addButtonLabel}</button><div class="catalog-quantity" data-catalog-quantity="${productId(name)}" hidden><button type="button" data-cart-action="decrease" data-product-id="${productId(name)}" aria-label="Diminuir ${name}">−</button><span data-catalog-quantity-value>0</span><button type="button" data-cart-action="increase" data-product-id="${productId(name)}" aria-label="Adicionar mais ${name}">+</button></div></div></div>`;
       grid.append(card);
     }
   });
@@ -365,7 +403,7 @@ document.addEventListener("click", (event) => {
   const { productId, productName } = addButton.dataset;
   const productPrice = Number(addButton.dataset.productPrice);
 
-  if (["Refrigerante em lata", "Refrigerante 200ml"].includes(productName)) {
+  if (["Refrigerante em Lata", "Refrigerante 200 ml"].includes(productName)) {
     pendingDrinkButton = addButton;
     drinkChoiceInput.value = "";
     drinkChoiceDialog.showModal();
@@ -435,7 +473,7 @@ function animateCartFeedback() {
   }
 }
 
-bagList.addEventListener("click", (event) => {
+document.addEventListener("click", (event) => {
   if (!(event.target instanceof Element)) {
     return;
   }
@@ -555,6 +593,14 @@ function renderCart() {
     row.append(image, description, controls);
     bagList.append(row);
   }
+
+  document.querySelectorAll("[data-catalog-quantity]").forEach((controls) => {
+    const item = cartItems.get(controls.dataset.catalogQuantity);
+    const addButton = controls.parentElement.querySelector("[data-add-to-cart]");
+    controls.hidden = !item;
+    if (item) controls.querySelector("[data-catalog-quantity-value]").textContent = String(item.quantity);
+    if (addButton) addButton.hidden = Boolean(item);
+  });
 }
 
 checkoutButton.addEventListener("click", () => {

@@ -17,7 +17,7 @@
     <header class="site-header">
       <div class="site-header__inner">
         <a class="site-brand" href="./" aria-label="Casa de Ribeiro - início">
-          <img class="site-brand__hat" src="./assets/logo-website.webp" alt="" />
+          <img class="site-brand__hat" src="./assets/ribeiro.webp" alt="" />
           <span class="site-brand__text">
             <span class="site-brand__name">Casa de Ribeiro</span>
             <span
@@ -60,22 +60,7 @@
             aria-haspopup="dialog"
             aria-controls="order-bag"
           >
-            <svg class="cart-button__icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M5 8h14l-1.2 12H6.2L5 8Z"
-                fill="none"
-                stroke="currentColor"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-              />
-              <path
-                d="M9 9V6a3 3 0 0 1 6 0v3"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="1.8"
-              />
-            </svg>
+            <img class="cart-button__icon" src="./assets/bag.webp" alt="" aria-hidden="true">
             <span class="cart-button__count" aria-label="0 itens" hidden>0</span>
           </button>
         </div>
@@ -83,13 +68,30 @@
     </header>
     <main class="site-content">
       <section class="catalog" aria-label="Cardápio">
-        <nav class="category-nav" aria-label="Ir para uma categoria">
-          <a href="#burgers-title">Hambúrgueres</a>
-          <a href="#traditional-title">Tradicionais</a>
-          <a href="#drinks-title">Bebidas</a>
-          <a href="#beers-title">Cervejas</a>
-          <a href="#hot-drinks-title">Quentes</a>
-        </nav>
+        <div class="category-nav-shell">
+          <button
+            class="category-nav__arrow category-nav__arrow--prev"
+            type="button"
+            aria-label="Ver categorias anteriores"
+            hidden
+          >
+            <img src="./assets/left.webp" alt="" aria-hidden="true">
+          </button>
+          <nav class="category-nav" aria-label="Ir para uma categoria">
+            <a href="#burgers-title">Hambúrgueres</a>
+            <a href="#traditional-title">Tradicionais</a>
+            <a href="#drinks-title">Bebidas</a>
+            <a href="#beers-title">Cervejas</a>
+            <a href="#hot-drinks-title">Quentes</a>
+          </nav>
+          <button
+            class="category-nav__arrow category-nav__arrow--next"
+            type="button"
+            aria-label="Ver próximas categorias"
+          >
+            <img src="./assets/right.webp" alt="" aria-hidden="true">
+          </button>
+        </div>
         <section class="catalog-section" aria-labelledby="burgers-title">
           <h2 id="burgers-title">Hambúrgueres</h2>
           <div class="catalog-grid">
@@ -216,6 +218,7 @@
       aria-controls="order-bag"
       hidden
     >
+      <img class="mobile-cart__icon" src="./assets/bag.webp" alt="" aria-hidden="true">
       <span class="mobile-cart__label">
         <span class="mobile-cart__count">0</span>
         <span>Ver sacola</span>
@@ -253,9 +256,8 @@
         <button class="add-button closed-notice__close" type="button">Fechar</button>
       </div>
     </dialog>
-    <dialog class="order-bag" id="order-bag" aria-labelledby="order-bag-title">
+    <dialog class="order-bag" id="order-bag" aria-label="Sua sacola">
       <div class="order-bag__header">
-        <h2 id="order-bag-title">Sua sacola</h2>
         <button class="order-bag__close" type="button" aria-label="Fechar sacola">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -270,22 +272,7 @@
       </div>
       <div class="order-bag__items" aria-live="polite">
         <div class="order-bag__empty">
-          <svg class="order-bag__empty-icon" viewBox="0 0 48 48" aria-hidden="true">
-            <path
-              d="M8 16h32l-3 25H11L8 16Z"
-              fill="none"
-              stroke="currentColor"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-            <path
-              d="M17 18v-5a7 7 0 0 1 14 0v5"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-width="2"
-            />
-          </svg>
+          <img class="order-bag__empty-icon" src="./assets/bag.webp" alt="" aria-hidden="true">
           <p class="order-bag__empty-title">Sua sacola está vazia</p>
           <p class="order-bag__empty-description">
             Escolha seus favoritos no cardápio para começar
@@ -296,7 +283,12 @@
       <div class="order-bag__footer">
         <label class="order-bag__field" for="order-notes">
           <span>Observações</span>
-          <textarea id="order-notes" rows="2" maxlength="300" placeholder="Ex.: tirar cebola, enviar talheres..."></textarea>
+          <textarea
+            id="order-notes"
+            rows="2"
+            maxlength="300"
+            placeholder="Ex.: tirar cebola, enviar talheres..."
+          ></textarea>
         </label>
         <label class="order-bag__field" for="payment-method">
           <span>Forma de pagamento</span>
