@@ -112,7 +112,7 @@ button {
   top: 0;
   padding: 0.75rem clamp(1rem, 4vw, 2.5rem);
   border-bottom: 1px solid rgb(32 32 32 / 14%);
-  background: #fff;
+  background: var(--color-gold);
   box-shadow: 0 0.35rem 1.4rem rgb(32 32 32 / 12%);
   color: #000;
 }
@@ -685,6 +685,23 @@ button {
   line-height: 1;
 }
 
+.catalog-quantity__summary {
+  display: inline-flex;
+  min-width: 4.4rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.catalog-quantity__summary small {
+  margin-top: 0.15rem;
+  color: rgb(255 255 255 / 82%);
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
 .add-button:hover {
   background: var(--color-wine-dark);
   box-shadow: 0 0.35rem 0.8rem rgb(95 25 22 / 20%);
@@ -780,8 +797,9 @@ button {
 
 .site-footer {
   padding: 2rem clamp(1rem, 4vw, 2.5rem);
-  background: #fff;
-  color: var(--color-ink);
+  border-top: 1px solid var(--color-wine);
+  background: var(--color-gold);
+  color: var(--color-wine);
   text-align: center;
 }
 
@@ -805,7 +823,7 @@ button {
 }
 
 .site-footer__copyright {
-  color: var(--color-muted);
+  color: var(--color-wine);
   font-size: 0.78rem;
 }
 
@@ -851,6 +869,7 @@ button {
 }
 
 .order-bag__header {
+  position: relative;
   display: flex;
   min-height: 5rem;
   align-items: center;
@@ -862,6 +881,9 @@ button {
 }
 
 .order-bag__header h2 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   margin: 0;
   color: var(--color-wine);
   font-family: Georgia, "Times New Roman", serif;
@@ -880,6 +902,7 @@ button {
   background: var(--color-wine);
   color: #fff;
   cursor: pointer;
+  margin-left: auto;
   transition: background-color 160ms ease, transform 160ms ease;
 }
 
