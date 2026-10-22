@@ -57,11 +57,11 @@ function updateCategoryNavArrows() {
 categoryNav?.addEventListener('scroll', updateCategoryNavArrows, { passive: true });
 categoryNavPrevious?.addEventListener('click', () => {
   pauseCategoryNav();
-  categoryNav?.scrollBy({ left: -240, behavior: 'smooth' });
+  categoryNav?.scrollBy({ left: -(categoryNav.clientWidth * 0.78), behavior: 'smooth' });
 });
 categoryNavNext?.addEventListener('click', () => {
   pauseCategoryNav();
-  categoryNav?.scrollBy({ left: 240, behavior: 'smooth' });
+  categoryNav?.scrollBy({ left: categoryNav.clientWidth * 0.78, behavior: 'smooth' });
 });
 categoryNav?.addEventListener('wheel', pauseCategoryNav, { passive: true });
 categoryNav?.addEventListener('touchstart', pauseCategoryNav, { passive: true });
@@ -75,12 +75,13 @@ window.setInterval(() => {
   categoryNav.scrollLeft = Math.max(0, Math.min(maxScroll, nextScroll));
 }, 24);
 window.addEventListener('resize', updateCategoryNavArrows);
+window.requestAnimationFrame(updateCategoryNavArrows);
 
 const taglineMessages = [
   'Cardápio digital',
   'Aberto das 08h às 00h',
   'Comida boa é aqui',
-  'Quinta do Dendê na quinta-feira!',
+  'Temos Quinta do Dendê',
 ];
 let taglineIndex = 0;
 
@@ -188,8 +189,9 @@ const menuCatalog = [
       ['Carne de Sol com Aipim', 50.0],
       ["Charque com Farofa d'Água", 50.0],
       ['Kibe (6 un.)', 17.0],
-      ['Pastel Grande', 17.0, 'Frango, carne, queijo, presunto'],
-      ['Pastel Grande', 21.0, 'Charque com banan da terra'],
+      ['Pastel (6 un.)', 17.0, 'Carne e frango'],
+      ['Pastel Grande Tradicional', 17.0, 'Frango, carne, queijo, presunto'],
+      ['Pastel Grande de Charque', 21.0, 'Charque com banana da terra'],
     ],
   ],
   [
@@ -420,7 +422,9 @@ const productImages = {
   Pitú: 'pitú.webp',
 };
 
-const isThursday = new Date().getDay() === 4;
+const now = new Date();
+const isThursday = now.getDay() === 4;
+const isDendeAvailable = isThursday && now.getHours() >= 18;
 const catalogOrder = [
   'Todos os dias',
   'Hambúrgueres',
@@ -438,32 +442,61 @@ const catalogOrder = [
   'Quentes',
 ];
 const catalogDisplayOrder = [
-  'Todos os dias',
-  'Jantinha',
-  'Espetinhos',
-  'Quinta do Dend\u00c3\u00aa',
-  'Petiscos',
-  'Hamb\u00c3\u00bargueres',
-  'Tradicionais',
-  'Hamb\u00c3\u00bargueres de Frango',
-  'Artesanais',
-  'Sandu\u00c3\u00adches Especiais com Fil\u00c3\u00a9',
-  'Sandu\u00c3\u00adches Especiais no Prato',
-  'Sucos 400 ml',
-  'Bebidas',
-  'Cervejas',
-  'Quentes',
+  'todos os dias',
+  'jantinha',
+  'quinta do dend',
+  'espetinhos',
+  'petiscos',
+  'hamb',
+  'tradicionais',
+  'hamb',
+  'sandu',
+  'sandu',
+  'artesanais',
+  'bebidas',
+  'sucos 400 ml',
+  'cervejas',
+  'quentes',
 ];
+const normalizeCatalogTitle = (title) =>
+  title
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+const getCatalogDisplayRank = (title) => {
+  const normalizedTitle = normalizeCatalogTitle(title);
+  if (normalizedTitle.startsWith('hamb') && normalizedTitle.includes('frango')) return 7;
+  if (normalizedTitle.startsWith('sandu') && normalizedTitle.includes('no prato')) return 9;
+  if (normalizedTitle.startsWith('sandu')) return 8;
+  if (normalizedTitle.startsWith('hamb')) return 5;
+  const rank = catalogDisplayOrder.findIndex((category) => normalizedTitle.startsWith(category));
+  return rank === -1 ? catalogDisplayOrder.length : rank;
+};
+const drinkGroupOrder = [
+  ['Água', 'H2O'],
+  ['Refrigerante', 'Coca-Cola'],
+  ['Red Bull', 'Monster'],
+];
+const getDrinkGroup = (name) => {
+  const groupIndex = drinkGroupOrder.findIndex((group) =>
+    group.some((label) => name.startsWith(label)),
+  );
+  return groupIndex === -1 ? drinkGroupOrder.length : groupIndex;
+};
 const orderedCatalog = menuCatalog
-  .filter(([title]) => title !== 'Quinta do Dendê' || isThursday)
+  .filter(([title]) => title !== 'Quinta do Dendê' || isDendeAvailable)
   .sort(
     ([firstTitle], [secondTitle]) =>
-      catalogDisplayOrder.indexOf(firstTitle) - catalogDisplayOrder.indexOf(secondTitle),
+      getCatalogDisplayRank(firstTitle) - getCatalogDisplayRank(secondTitle),
   )
   .map(([title, titleId, items]) => [
     title,
     titleId,
     [...items].sort((firstItem, secondItem) => {
+      if (title === 'Bebidas') {
+        const groupDifference = getDrinkGroup(firstItem[0]) - getDrinkGroup(secondItem[0]);
+        if (groupDifference !== 0) return groupDifference;
+      }
       const firstPrice = firstItem[1] ?? Number.POSITIVE_INFINITY;
       const secondPrice = secondItem[1] ?? Number.POSITIVE_INFINITY;
       return firstPrice - secondPrice;
@@ -488,6 +521,13 @@ const breadBasedProductNames = new Set(
     .filter(([title]) => breadBasedCategories.has(title))
     .flatMap(([, , items]) => items.map(([name]) => name)),
 );
+const isBurgerOrSandwichCategory = (title) => {
+  const normalizedTitle = title
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+  return normalizedTitle.includes('hamburguer') || normalizedTitle.includes('sanduiche');
+};
 
 function productId(name) {
   return name
@@ -530,7 +570,7 @@ function defaultDescription(title, name) {
   if (descriptions[name]) return descriptions[name];
   if (name.startsWith('Mini Acarajé'))
     return `${name.includes('com Camarão') ? 'Mini acarajé com camarão' : 'Mini acarajé sem camarão'}.`;
-  if (name === 'Pastel Grande')
+  if (name === 'Pastel Grande Tradicional')
     return 'Pastel grande recheado com frango, carne, queijo e presunto.';
   return title === 'Bebidas' || title === 'Cervejas' || title === 'Quentes'
     ? `${name} gelado, servido para acompanhar seu pedido.`
@@ -568,7 +608,7 @@ function renderCatalog() {
       const card = document.createElement('article');
       card.className = 'menu-card';
       card.dataset.searchable = `${title} ${name}`;
-      const fallbackImage = breadBasedCategories.has(title)
+      const fallbackImage = isBurgerOrSandwichCategory(title)
         ? 'comida.webp'
         : foodProductNames.has(name)
           ? 'comida2.webp'

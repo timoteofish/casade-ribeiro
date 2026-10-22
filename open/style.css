@@ -97,6 +97,12 @@ body {
     spin 850ms linear infinite;
 }
 
+.version {
+  color: rgb(91 23 20 / 58%);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+
 .page-shutter__panel {
   position: fixed;
   z-index: 10;
